@@ -1,5 +1,6 @@
 package co.rutavital.config;
 
+import co.rutavital.comando.InvocadorComandos;
 import co.rutavital.evento.BitacoraEventos;
 import co.rutavital.evento.CentroEstadoVial;
 import co.rutavital.evento.InvalidadorCache;
@@ -36,5 +37,10 @@ public class ConfiguracionRutaVital {
         centro.suscribir(recalculadorDespachos);
         centro.suscribir(bitacoraEventos);
         return centro;
+    }
+
+    @Bean
+    public InvocadorComandos invocadorComandos() {
+        return new InvocadorComandos();
     }
 }
