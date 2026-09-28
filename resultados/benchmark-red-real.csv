@@ -1,0 +1,4 @@
+estrategia,pares,rutasEncontradas,tiempoRutaPromedioMin,distanciaPromedioKm,tramosPromedio,nodosExploradosPromedio,tiempoCalculoPromedioMs,p95Ms,paresConTiempoOptimo,sobrecostoPromedioPct
+DIJKSTRA,462,462,89.50,72.55,4.62,12.00,0.00949,0.01636,462,0.00
+A_ESTRELLA,462,462,89.50,72.55,4.62,8.45,0.00778,0.01467,462,0.00
+MENOS_TRAMOS,462,462,127.19,77.87,3.57,12.00,0.00118,0.00192,298,34.25

@@ -1,0 +1,7 @@
+Fecha: 2026-09-28T18:06:29
+Java: 21.0.12.1 (OpenJDK 64-Bit Server VM)
+Sistema: Linux 7.0.0-34-generic amd64
+CPU: AMD Ryzen 7 250 w/ Radeon 780M Graphics
+Núcleos disponibles: 16
+Memoria máxima JVM: 2048 MB
+Semilla: 20260928

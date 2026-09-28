@@ -1,0 +1,5 @@
+red,consultas,consulta,tiempoPromedioMs,p95Ms,hits,misses
+red-real-22,462,primera,0.00443,0.00589,0,462
+red-real-22,462,repetida,0.00093,0.00115,462,462
+sintetica-50000,30,primera,13.55699,29.69220,0,30
+sintetica-50000,30,repetida,0.00072,0.00097,30,30
