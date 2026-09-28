@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RutaVital Santander</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600;700&display=swap">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="encabezado">
+    <div class="marca">
+        <span class="marca-simbolo" aria-hidden="true">H</span>
+        <div>
+            <h1>RutaVital Santander</h1>
+            <p class="marca-subtitulo">Rutas de ambulancia con recálculo ante cierres viales. Prototipo con red simplificada y datos aproximados.</p>
+        </div>
+    </div>
+    <div class="estado-sistema">
+        <div id="indicador-cache" class="indicador-cache" aria-live="polite">Consultando caché…</div>
+        <button id="btn-deshacer" class="boton boton-secundario" type="button" disabled>Deshacer última acción</button>
+    </div>
+</header>
+
+<main class="disposicion">
+    <aside class="panel" aria-label="Panel de control">
+        <section class="seccion" aria-labelledby="titulo-ruta">
+            <h2 id="titulo-ruta">Calcular ruta</h2>
+            <form id="form-ruta" class="formulario">
+                <label class="campo">Origen
+                    <select id="sel-origen" required></select>
+                </label>
+                <label class="campo">Destino
+                    <select id="sel-destino" required></select>
+                </label>
+                <label class="campo campo-ancho">Algoritmo
+                    <select id="sel-algoritmo">
+                        <option value="DIJKSTRA">Dijkstra</option>
+                        <option value="A_ESTRELLA">A* (heurística haversine)</option>
+                        <option value="MENOS_TRAMOS">Menos tramos (BFS)</option>
+                    </select>
+                </label>
+                <div class="acciones campo-ancho">
+                    <button type="submit" class="boton boton-primario">Calcular ruta</button>
+                    <button type="button" id="btn-comparar" class="boton boton-secundario">Comparar algoritmos</button>
+                </div>
+            </form>
+            <div id="resultado-ruta" class="resultado-ruta" hidden></div>
+            <div id="resultado-comparacion" class="resultado-comparacion" hidden></div>
+        </section>
+
+        <section class="seccion" aria-labelledby="titulo-despachos">
+            <h2 id="titulo-despachos">Despachos activos</h2>
+            <form id="form-despacho" class="formulario">
+                <label class="campo">Origen
+                    <select id="sel-despacho-origen" required></select>
+                </label>
+                <label class="campo">Destino
+                    <select id="sel-despacho-destino" required></select>
+                </label>
+                <div class="acciones campo-ancho">
+                    <button type="submit" class="boton boton-primario">Crear despacho</button>
+                </div>
+            </form>
+            <ul id="lista-despachos" class="lista-despachos"></ul>
+        </section>
+
+        <section class="seccion" aria-labelledby="titulo-bitacora">
+            <h2 id="titulo-bitacora">Bitácora de eventos</h2>
+            <ol id="lista-eventos" class="lista-eventos"></ol>
+        </section>
+
+        <section class="seccion" aria-labelledby="titulo-historial">
+            <h2 id="titulo-historial">Acciones que se pueden deshacer</h2>
+            <ol id="lista-historial" class="lista-historial"></ol>
+        </section>
+    </aside>
+
+    <div class="contenedor-mapa">
+        <div id="mapa" aria-label="Mapa de la red vial de Santander"></div>
+    </div>
+</main>
+
+<div id="aviso" class="aviso" role="status" aria-live="polite" hidden></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="app.js"></script>
+</body>
+</html>
