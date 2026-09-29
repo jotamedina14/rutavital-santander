@@ -61,12 +61,13 @@ ejecutar_escenario() {
         exit 1
     fi
 
-    # Locust devuelve código 1 si hubo peticiones fallidas; se registra pero no detiene el script
+    # Locust imprime el resumen final por stderr; se guarda también en locust-consola.txt.
+    # Devuelve código 1 si hubo peticiones fallidas; se registra pero no detiene el script.
     set +e
     "$LOCUST" -f pruebas-carga/locustfile.py --headless \
         -u "$USUARIOS" -r "$TASA" -t "$DURACION" --host "$URL" \
-        --csv "$carpeta/locust" --html "$carpeta/reporte.html" --only-summary
-    echo "Locust terminó con código $?"
+        --csv "$carpeta/locust" --html "$carpeta/reporte.html" --only-summary 2>&1 | tee "$carpeta/locust-consola.txt"
+    echo "Locust terminó con código ${PIPESTATUS[0]}"
     set -e
 
     curl -sf "$URL/api/metricas/cache" > "$carpeta/metricas-cache.json" || true

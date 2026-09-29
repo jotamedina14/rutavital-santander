@@ -59,11 +59,16 @@ function Ejecutar-Escenario([string]$Nombre, [string]$Cache) {
         }
         if (-not $Lista) { throw "La aplicación no arrancó; revisa $Carpeta\app.log" }
 
-        # Locust devuelve código 1 si hubo peticiones fallidas; se informa pero no se detiene el script
-        & locust -f (Join-Path "pruebas-carga" "locustfile.py") --headless `
-            -u $Usuarios -r $Tasa -t $Duracion --host $Url `
-            --csv (Join-Path $Carpeta "locust") --html (Join-Path $Carpeta "reporte.html") --only-summary
-        Write-Host "Locust terminó con código $LASTEXITCODE"
+        # Locust imprime el resumen final por stderr; se guarda en locust-consola.txt y se muestra.
+        # Devuelve código 1 si hubo peticiones fallidas; se informa pero no se detiene el script.
+        $Consola = Join-Path $Carpeta "locust-consola.txt"
+        $ArgumentosLocust = "-f `"$(Join-Path 'pruebas-carga' 'locustfile.py')`" --headless " +
+            "-u $Usuarios -r $Tasa -t $Duracion --host $Url " +
+            "--csv `"$(Join-Path $Carpeta 'locust')`" --html `"$(Join-Path $Carpeta 'reporte.html')`" --only-summary"
+        $Locust = Start-Process -FilePath "locust" -ArgumentList $ArgumentosLocust -NoNewWindow -Wait -PassThru `
+            -RedirectStandardError $Consola
+        Get-Content $Consola | Write-Host
+        Write-Host "Locust terminó con código $($Locust.ExitCode)"
 
         Invoke-WebRequest -UseBasicParsing -Uri "$Url/api/metricas/cache" `
             -OutFile (Join-Path $Carpeta "metricas-cache.json")
