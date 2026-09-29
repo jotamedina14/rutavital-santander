@@ -391,7 +391,11 @@ function crearItinerario(ruta) {
     return lista;
 }
 
-async function compararAlgoritmos(origen, destino) {
+/**
+ * @param mostrarTabla true cuando lo pide el usuario: desplaza el panel hasta la tabla.
+ *                     En los refrescos automáticos la vista no se mueve.
+ */
+async function compararAlgoritmos(origen, destino, mostrarTabla = false) {
     const comparacion = await api(`/rutas/comparar?${new URLSearchParams({ origen, destino })}`);
     estado.comparacionMostrada = { origen, destino };
     const contenedor = $('resultado-comparacion');
@@ -438,6 +442,10 @@ async function compararAlgoritmos(origen, destino) {
     contenedor.append(tabla);
     contenedor.append(elemento('p', 'nota',
         'Las tres estrategias se ejecutan sin caché. Haz clic en una fila para verla en el mapa.'));
+    if (mostrarTabla) {
+        const suave = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        contenedor.scrollIntoView({ behavior: suave ? 'smooth' : 'auto', block: 'nearest' });
+    }
 }
 
 /* ---------- Acciones (Command) ---------- */
@@ -686,7 +694,7 @@ function conectarEventos() {
     $('btn-comparar').addEventListener('click', async () => {
         try {
             const { origen, destino } = consultaActual();
-            await compararAlgoritmos(origen, destino);
+            await compararAlgoritmos(origen, destino, true);
         } catch (error) {
             avisar(error.message, true);
         }
