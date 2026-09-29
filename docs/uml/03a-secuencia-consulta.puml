@@ -25,8 +25,8 @@ else no está en caché (miss)
   NAV -> AE : calcular(red, origen, destino)
   loop mientras la cola de prioridad no esté vacía
     AE -> RED : vecinos(municipioActual)
-    RED --> AE : tramos no CERRADOS
-    AE -> AE : f(n) = g(n) + h(n)\nh = haversine / 60 km/h
+    RED --> AE : tramos incidentes
+    AE -> AE : descarta tramos CERRADOS\nf(n) = g(n) + h(n), h = haversine / 60 km/h
   end
   AE --> NAV : Ruta + MetricasBusqueda
   NAV --> PX : Ruta

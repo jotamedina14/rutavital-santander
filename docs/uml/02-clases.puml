@@ -72,7 +72,7 @@ package estrategia <<Strategy>> {
   }
   class EstrategiaDijkstra
   class EstrategiaAEstrella {
-    - heuristica(a, b) : double
+    ~ heuristicaMin(red, municipioId, destino) : double {static}
   }
   class EstrategiaMenosTramos
   class FabricaEstrategias {

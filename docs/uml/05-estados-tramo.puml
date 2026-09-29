@@ -7,7 +7,7 @@ title Máquina de estados - Tramo vial
 [*] --> ABIERTO
 ABIERTO : factor de tiempo 1.0
 RESTRINGIDO : factor 1.6 (paso a un carril)
-CERRADO : no transitable\nexcluido del grafo
+CERRADO : no transitable\n(sigue en el grafo;\nlas estrategias lo ignoran)
 
 ABIERTO --> RESTRINGIDO : cambiarEstado(RESTRINGIDO)\n/ notificar observadores
 ABIERTO --> CERRADO : cambiarEstado(CERRADO)\n/ notificar observadores
