@@ -631,6 +631,11 @@ input[type="text"] {
     font-family: var(--fuente);
 }
 
+/* Sin recuadro de foco al hacer clic en un tramo (las líneas no son navegables con teclado) */
+path.leaflet-interactive:focus {
+    outline: none;
+}
+
 /* Mapa base atenuado para que la red vial y su estado sean lo que se lee primero */
 .leaflet-tile-pane {
     filter: grayscale(0.85) contrast(0.92) brightness(1.04);
