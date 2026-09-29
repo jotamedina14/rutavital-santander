@@ -1,0 +1,7 @@
+!pragma layout smetana
+!include ../estilo.iuml
+skinparam dpi 200
+skinparam defaultFontSize 12
+hide empty members
+hide circle
+skinparam classAttributeIconSize 0

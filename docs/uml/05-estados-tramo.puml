@@ -1,0 +1,18 @@
+@startuml 05-estados-tramo
+!pragma layout smetana
+!include estilo.iuml
+hide empty description
+title Máquina de estados - Tramo vial
+
+[*] --> ABIERTO
+ABIERTO : factor de tiempo 1.0
+RESTRINGIDO : factor 1.6 (paso a un carril)
+CERRADO : no transitable\nexcluido del grafo
+
+ABIERTO --> RESTRINGIDO : cambiarEstado(RESTRINGIDO)\n/ notificar observadores
+ABIERTO --> CERRADO : cambiarEstado(CERRADO)\n/ notificar observadores
+RESTRINGIDO --> CERRADO : derrumbe total\n/ notificar observadores
+RESTRINGIDO --> ABIERTO : vía despejada\n/ notificar observadores
+CERRADO --> RESTRINGIDO : habilitación parcial\n/ notificar observadores
+CERRADO --> ABIERTO : reapertura o deshacer()\n/ notificar observadores
+@enduml

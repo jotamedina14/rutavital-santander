@@ -46,6 +46,11 @@ derrumbe, el despacho se recalcula solo por Villanueva y Los Santos (T12, T11, T
 Cada capa solo usa la de abajo. No hay base de datos: la red se carga del JSON al iniciar y el estado
 (tramos, despachos, caché, bitácora) vive en memoria.
 
+Los diagramas UML (componentes, clases, secuencias, actividad, estados del tramo y uno por patrón) están en
+[`docs/uml`](docs/uml/README.md).
+
+![Diagrama de componentes](docs/uml/01-componentes.png)
+
 ## Patrones de diseño
 
 | Patrón | Dónde | Participantes | Para qué |
@@ -216,7 +221,7 @@ rutavital-santander/
 ├── src/test/java/     pruebas JUnit 5
 ├── pruebas-carga/     locustfile.py, ejecutar-carga.sh, ejecutar-carga.ps1, plan-rutas.jmx
 ├── resultados/        CSV del benchmark y de las pruebas de carga, RESUMEN_RESULTADOS.md
-├── docs/uml/          diagramas UML
+├── docs/uml/          diagramas UML (PlantUML y PNG)
 ├── docs/capturas/     capturas de pantalla
 └── CAMBIOS_ARQUITECTURA.md
 ```

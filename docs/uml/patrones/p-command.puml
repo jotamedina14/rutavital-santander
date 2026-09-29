@@ -1,0 +1,16 @@
+@startuml p-command
+!include base.iuml
+class InvocadorComandos {
+  - historial : Deque
+  + deshacerUltimo()
+}
+interface Comando <<interface>> {
+  + ejecutar()
+  + deshacer()
+}
+class ComandoCambiarEstadoTramo
+class ComandoCrearDespacho
+InvocadorComandos o-- "*" Comando
+Comando <|.. ComandoCambiarEstadoTramo
+Comando <|.. ComandoCrearDespacho
+@enduml

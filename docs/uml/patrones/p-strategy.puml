@@ -1,0 +1,14 @@
+@startuml p-strategy
+!include base.iuml
+class NavegadorRutas
+interface EstrategiaNavegacion <<interface>> {
+  + calcular(red, o, d) : Ruta
+}
+class EstrategiaDijkstra
+class EstrategiaAEstrella
+class EstrategiaMenosTramos
+NavegadorRutas --> EstrategiaNavegacion
+EstrategiaNavegacion <|.. EstrategiaDijkstra
+EstrategiaNavegacion <|.. EstrategiaAEstrella
+EstrategiaNavegacion <|.. EstrategiaMenosTramos
+@enduml

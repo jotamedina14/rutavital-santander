@@ -1,0 +1,176 @@
+@startuml 02-clases
+!pragma layout smetana
+!include estilo.iuml
+skinparam defaultFontSize 10
+hide empty members
+title Diagrama de clases - RutaVital Santander
+
+package modelo {
+  class RedVial {
+    - municipios : Map<String, Municipio>
+    - tramos : Map<String, Tramo>
+    - adyacencia : Map<String, List<Tramo>>
+    + vecinos(municipioId) : List<Tramo>
+    + buscarTramo(id) : Optional<Tramo>
+    + buscarMunicipio(id) : Optional<Municipio>
+  }
+  class Municipio {
+    - id : String
+    - nombre : String
+    - latitud : double
+    - longitud : double
+    - tieneHospital : boolean
+    - nivelHospital : int
+  }
+  class Tramo {
+    - id : String
+    - origenId : String
+    - destinoId : String
+    - distanciaKm : double
+    - tipoVia : TipoVia
+    - estado : EstadoTramo
+    + tiempoEstimadoMin() : double
+    + esTransitable() : boolean
+  }
+  enum TipoVia {
+    PRINCIPAL : 60 km/h
+    SECUNDARIA : 40 km/h
+    DESTAPADA : 25 km/h
+  }
+  enum EstadoTramo {
+    ABIERTO : factor 1.0
+    RESTRINGIDO : factor 1.6
+    CERRADO : no transitable
+  }
+  class Ruta {
+    - municipios : List<String>
+    - tramos : List<String>
+    - distanciaTotalKm : double
+    - tiempoTotalMin : double
+    - algoritmo : String
+    - encontrada : boolean
+  }
+  class MetricasBusqueda {
+    - nodosExplorados : int
+    - tiempoCalculoNanos : long
+    - desdeCache : boolean
+  }
+  class Despacho {
+    - id : String
+    - origenId : String
+    - destinoId : String
+    - estado : EstadoDespacho
+    - vecesRecalculada : int
+    + actualizarRuta(nueva : Ruta)
+  }
+}
+
+package estrategia <<Strategy>> {
+  interface EstrategiaNavegacion {
+    + calcular(red, origenId, destinoId) : Ruta
+    + nombre() : String
+  }
+  class EstrategiaDijkstra
+  class EstrategiaAEstrella {
+    - heuristica(a, b) : double
+  }
+  class EstrategiaMenosTramos
+  class FabricaEstrategias {
+    + obtener(nombre) : EstrategiaNavegacion
+  }
+}
+
+package servicio <<Proxy>> {
+  interface ServicioRutas {
+    + calcularRuta(origenId, destinoId, algoritmo) : Ruta
+  }
+  class NavegadorRutas
+  class ServicioRutasConCache {
+    - cache : ConcurrentHashMap<String, EntradaCache>
+    - generacion : AtomicLong
+    - hits : AtomicLong
+    - misses : AtomicLong
+    + limpiar()
+  }
+  class GestorDespachos {
+    + crear(origenId, destinoId) : Despacho
+    + listarActivos() : List<Despacho>
+    + finalizar(id)
+  }
+}
+
+package evento <<Observer>> {
+  class CentroEstadoVial {
+    - observadores : List<ObservadorVial>
+    + suscribir(o)
+    + desuscribir(o)
+    + cambiarEstado(tramoId, estado, motivo) : Optional<EventoVial>
+  }
+  interface ObservadorVial {
+    + alCambiarEstado(evento : EventoVial)
+  }
+  class EventoVial {
+    - tramoId : String
+    - estadoAnterior : EstadoTramo
+    - estadoNuevo : EstadoTramo
+    - motivo : String
+    - fechaHora : LocalDateTime
+  }
+  class InvalidadorCache
+  class RecalculadorDespachos
+  class BitacoraEventos
+}
+
+package comando <<Command>> {
+  interface Comando {
+    + ejecutar()
+    + deshacer()
+    + descripcion() : String
+  }
+  class ComandoCambiarEstadoTramo {
+    - estadoAnterior : EstadoTramo
+  }
+  class ComandoCrearDespacho
+  class InvocadorComandos {
+    - historial : Deque<Comando>
+    + ejecutar(c : Comando)
+    + deshacerUltimo() : Optional<Comando>
+  }
+}
+
+RedVial "1" *-- "*" Municipio
+RedVial "1" *-- "*" Tramo
+Tramo --> TipoVia
+Tramo --> EstadoTramo
+Ruta "1" *-- "1" MetricasBusqueda
+Despacho --> "1" Ruta : rutaActual
+Despacho o-- "*" Ruta : historialRutas
+
+EstrategiaNavegacion <|.. EstrategiaDijkstra
+EstrategiaNavegacion <|.. EstrategiaAEstrella
+EstrategiaNavegacion <|.. EstrategiaMenosTramos
+FabricaEstrategias ..> EstrategiaNavegacion : crea
+EstrategiaNavegacion ..> RedVial : recorre
+EstrategiaNavegacion ..> Ruta : produce
+
+ServicioRutas <|.. NavegadorRutas
+ServicioRutas <|.. ServicioRutasConCache
+ServicioRutasConCache --> NavegadorRutas : delega
+NavegadorRutas --> FabricaEstrategias
+
+CentroEstadoVial o-- "*" ObservadorVial
+CentroEstadoVial ..> EventoVial : emite
+ObservadorVial <|.. InvalidadorCache
+ObservadorVial <|.. RecalculadorDespachos
+ObservadorVial <|.. BitacoraEventos
+InvalidadorCache --> ServicioRutasConCache
+RecalculadorDespachos --> GestorDespachos
+RecalculadorDespachos --> ServicioRutas
+
+Comando <|.. ComandoCambiarEstadoTramo
+Comando <|.. ComandoCrearDespacho
+InvocadorComandos o-- "*" Comando
+ComandoCambiarEstadoTramo --> CentroEstadoVial
+ComandoCrearDespacho --> GestorDespachos
+GestorDespachos o-- "*" Despacho
+@enduml

@@ -1,0 +1,38 @@
+@startuml 03a-secuencia-consulta
+!include estilo.iuml
+autonumber
+hide footbox
+title Secuencia 1 - Consulta de ruta óptima (Proxy + Strategy)
+
+actor Operador
+participant "Mapa web" as UI
+participant ":RutaController" as RC
+participant ":ServicioRutasConCache" as PX
+participant ":NavegadorRutas" as NAV
+participant ":FabricaEstrategias" as FAB
+participant ":EstrategiaAEstrella" as AE
+participant ":RedVial" as RED
+
+Operador -> UI : elige origen, destino\ny algoritmo A_ESTRELLA
+UI -> RC : GET /api/rutas?origen=SAN_GIL\n&destino=BUCARAMANGA&algoritmo=A_ESTRELLA
+RC -> PX : calcularRuta(origen, destino, algoritmo)
+alt la clave está en caché (hit)
+  PX --> RC : Ruta (desdeCache = true)
+else no está en caché (miss)
+  PX -> NAV : calcularRuta(origen, destino, algoritmo)
+  NAV -> FAB : obtener("A_ESTRELLA")
+  FAB --> NAV : EstrategiaNavegacion
+  NAV -> AE : calcular(red, origen, destino)
+  loop mientras la cola de prioridad no esté vacía
+    AE -> RED : vecinos(municipioActual)
+    RED --> AE : tramos no CERRADOS
+    AE -> AE : f(n) = g(n) + h(n)\nh = haversine / 60 km/h
+  end
+  AE --> NAV : Ruta + MetricasBusqueda
+  NAV --> PX : Ruta
+  PX -> PX : guardar en caché
+  PX --> RC : Ruta (desdeCache = false)
+end
+RC --> UI : 200 OK (JSON)
+UI --> Operador : dibuja la ruta y muestra\ntiempo, km, nodos y ms
+@enduml

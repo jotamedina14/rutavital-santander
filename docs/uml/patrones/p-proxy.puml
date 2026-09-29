@@ -1,0 +1,16 @@
+@startuml p-proxy
+!include base.iuml
+class RutaController
+interface ServicioRutas <<interface>> {
+  + calcularRuta(o, d, alg) : Ruta
+}
+class ServicioRutasConCache {
+  - cache : Map
+  + limpiar()
+}
+class NavegadorRutas
+RutaController --> ServicioRutas
+ServicioRutas <|.. ServicioRutasConCache
+ServicioRutas <|.. NavegadorRutas
+ServicioRutasConCache --> NavegadorRutas : delega
+@enduml

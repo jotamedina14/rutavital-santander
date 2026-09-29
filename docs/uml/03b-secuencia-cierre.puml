@@ -1,0 +1,49 @@
+@startuml 03b-secuencia-cierre
+!include estilo.iuml
+autonumber
+hide footbox
+title Secuencia 2 - Cierre vial y recálculo automático (Command + Observer)
+
+actor "Operador CRUE" as Op
+participant ":RedVialController" as RVC
+participant ":InvocadorComandos" as INV
+participant ":ComandoCambiar\nEstadoTramo" as CMD
+participant ":CentroEstadoVial" as CEV
+participant ":InvalidadorCache" as IC
+participant ":Recalculador\nDespachos" as RD
+participant ":ServicioRutas\nConCache" as SR
+participant ":Despacho" as DES
+participant ":BitacoraEventos" as BIT
+
+Op -> RVC : POST /api/tramos/T06/estado\n{estado: CERRADO, motivo: derrumbe}
+RVC -> CMD ** : new(T06, CERRADO, motivo)
+RVC -> INV : ejecutar(comando)
+INV -> CMD : ejecutar()
+CMD -> CEV : cambiarEstado(T06, CERRADO, motivo)
+CEV -> CEV : actualizar Tramo T06\ncrear EventoVial
+group notificar observadores (en orden)
+  CEV -> IC : alCambiarEstado(evento)
+  IC -> SR : limpiar()
+  CEV -> RD : alCambiarEstado(evento)
+  RD -> RD : listarActivos() en GestorDespachos
+  loop por cada despacho ACTIVO que usa T06
+    RD -> SR : calcularRuta(SAN_GIL, BUCARAMANGA, DIJKSTRA)
+    SR --> RD : nueva Ruta por Villanueva (miss)
+    RD -> DES : actualizarRuta(nueva)
+    note right of DES : la ruta anterior pasa\nal historial;\nvecesRecalculada = 1
+  end
+  CEV -> BIT : alCambiarEstado(evento)
+end
+CEV --> CMD : EventoVial (anterior = ABIERTO)
+CMD -> CMD : estadoAnterior = evento.estadoAnterior
+INV -> INV : historial.push(comando)
+RVC --> Op : 200 OK
+
+== El operador se equivocó de tramo ==
+Op -> RVC : POST /api/comandos/deshacer
+RVC -> INV : deshacerUltimo()
+INV -> CMD : deshacer()
+CMD -> CEV : cambiarEstado(T06, ABIERTO, "deshacer")
+note right of CEV : se repite la notificación:\nlos despachos vuelven a la ruta original
+RVC --> Op : 200 OK
+@enduml

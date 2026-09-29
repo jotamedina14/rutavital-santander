@@ -1,0 +1,62 @@
+@startuml 01-componentes
+!pragma layout smetana
+!include estilo.iuml
+title Diagrama de componentes - RutaVital Santander
+
+actor "Operador CRUE /\nambulancia" as usuario
+
+package "Capa de presentación" as P1 {
+  component [Mapa web\nLeaflet + JS] as UI
+}
+
+package "Capa API REST" as P2 {
+  component [RutaController] as RC
+  component [MetricasController] as MC
+  component [RedVialController] as RVC
+  component [DespachoController] as DC
+}
+
+package "Capa de aplicación" as P3 {
+  component [ServicioRutasConCache\n<<Proxy>>\nprovee ServicioRutas] as PROXY
+  component [InvocadorComandos\n<<Command>>\nejecuta Comando] as CMD
+  component [CentroEstadoVial\n<<Observer: sujeto>>] as CEV
+  component [InvalidadorCache\nRecalculadorDespachos\nBitacoraEventos\n<<ObservadorVial>>] as OBS
+  component [GestorDespachos] as GD
+}
+
+package "Dominio de navegación" as P4 {
+  component [NavegadorRutas\n<<Strategy: contexto>>] as NAV
+  component [EstrategiaDijkstra\nEstrategiaAEstrella\nEstrategiaMenosTramos\n<<EstrategiaNavegacion>>] as EST
+  component [RedVial\n(grafo)] as RED
+}
+
+package "Infraestructura" as P5 {
+  component [RepositorioRedVial] as REPO
+  database "red-vial-\nsantander.json" as JSON
+}
+
+usuario --> UI
+UI --> RC : HTTP/JSON
+UI --> MC
+UI --> RVC
+UI --> DC
+
+RC --> PROXY : ServicioRutas
+MC --> PROXY : hits/misses
+RVC --> CMD : Comando
+DC --> CMD : Comando
+
+CMD --> CEV : cambiarEstado()
+CMD --> GD : crear()
+CEV --> OBS : notifica
+OBS --> PROXY : limpiar()
+OBS --> GD : recalcular
+
+PROXY --> NAV : cache miss
+NAV --> EST : calcular()
+EST --> RED : consulta
+
+REPO --> RED : construye
+REPO --> JSON : lee
+NAV -[hidden]-> REPO
+@enduml

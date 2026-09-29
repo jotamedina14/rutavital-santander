@@ -1,0 +1,57 @@
+@startuml 04-actividad
+!include estilo.iuml
+title Diagrama de actividad - Despacho de ambulancia con navegación adaptativa
+
+|Operador CRUE|
+start
+:Recibir solicitud de traslado
+(municipio de origen y nivel de atención requerido);
+:Seleccionar hospital de destino;
+:Crear despacho;
+
+|RutaVital|
+:Ejecutar ComandoCrearDespacho;
+if (¿La ruta ya está en caché?) then (sí)
+  :Devolver ruta cacheada;
+else (no)
+  :Seleccionar estrategia
+  (A*, Dijkstra o MenosTramos);
+  :Explorar la red ignorando
+  tramos CERRADOS;
+  :Guardar ruta en caché;
+endif
+if (¿Existe ruta?) then (no)
+  :Informar "sin ruta transitable";
+  |Operador CRUE|
+  :Buscar alternativa
+  (aeromédico o hospital cercano);
+  stop
+else (sí)
+  |RutaVital|
+  :Mostrar ruta, tiempo y km en el mapa;
+endif
+
+|Ambulancia|
+:Iniciar traslado;
+repeat
+  :Avanzar por la ruta actual;
+  |RutaVital|
+  if (¿Llega un EventoVial?) then (sí)
+    :Invalidar caché;
+    if (¿El tramo afectado está\nen la ruta del despacho?) then (sí)
+      :Recalcular ruta;
+      :Guardar ruta anterior en historial;
+      |Ambulancia|
+      :Tomar la nueva ruta;
+    else (no)
+      :Mantener ruta;
+    endif
+  else (no)
+  endif
+  |Ambulancia|
+repeat while (¿Llegó al hospital?) is (no) not (sí)
+:Entregar paciente;
+|Operador CRUE|
+:Finalizar despacho;
+stop
+@enduml

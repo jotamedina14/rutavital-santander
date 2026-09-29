@@ -1,0 +1,17 @@
+@startuml p-observer
+!include base.iuml
+class CentroEstadoVial {
+  + suscribir(o)
+  + cambiarEstado(...)
+}
+interface ObservadorVial <<interface>> {
+  + alCambiarEstado(e)
+}
+class InvalidadorCache
+class RecalculadorDespachos
+class BitacoraEventos
+CentroEstadoVial o-- "*" ObservadorVial
+ObservadorVial <|.. InvalidadorCache
+ObservadorVial <|.. RecalculadorDespachos
+ObservadorVial <|.. BitacoraEventos
+@enduml
