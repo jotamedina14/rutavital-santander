@@ -223,13 +223,29 @@ rutavital-santander/
 
 ## Capturas
 
-Guarda las imágenes en `docs/capturas/` y descomenta la línea correspondiente.
+**Vista general:** hospitales (H azul, tamaño según nivel) y tramos coloreados por estado.
 
-<!-- ![Vista general del mapa y la red vial](docs/capturas/01-vista-general.png) -->
-<!-- ![Ruta San Gil - Bucaramanga por el Chicamocha](docs/capturas/02-ruta-normal.png) -->
-<!-- ![Comparación de algoritmos](docs/capturas/03-comparar-algoritmos.png) -->
-<!-- ![Cierre de T06 y despacho recalculado](docs/capturas/04-cierre-t06-recalculo.png) -->
-<!-- ![Bitácora de eventos y deshacer](docs/capturas/05-bitacora-deshacer.png) -->
+![Vista general del mapa y la red vial](docs/capturas/01-vista-general.jpg)
+
+**Ruta San Gil → Bucaramanga por el Chicamocha:** 103 min, con métricas e itinerario.
+
+![Ruta San Gil - Bucaramanga por el Chicamocha](docs/capturas/02-ruta-normal.jpg)
+
+**Comparación de las tres estrategias** (sin caché).
+
+![Comparación de algoritmos](docs/capturas/03-comparar-algoritmos.jpg)
+
+**Cierre de T06** desde el mapa, con el motivo del cierre.
+
+![Ventana del tramo T06 con el motivo del cierre](docs/capturas/04-popup-cierre-t06.jpg)
+
+**Despacho recalculado:** ruta nueva en azul por Villanueva y Los Santos, la anterior en gris punteado; bitácora e historial de comandos.
+
+![Cierre de T06 y despacho recalculado](docs/capturas/05-cierre-t06-recalculo.jpg)
+
+**Deshacer:** T06 se reabre y el despacho vuelve a su ruta original.
+
+![Deshacer la última acción](docs/capturas/06-deshacer.jpg)
 
 ## Cambios frente al diseño
 
